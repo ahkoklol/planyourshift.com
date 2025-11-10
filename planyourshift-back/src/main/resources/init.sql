@@ -1,5 +1,5 @@
-CREATE TABLE StoreOwner (
-                            store_owner_id SERIAL PRIMARY KEY,
+CREATE TABLE Owner (
+                            owner_id SERIAL PRIMARY KEY,
                             name VARCHAR(255) NOT NULL,
                             email VARCHAR(255) UNIQUE NOT NULL,
                             password VARCHAR(255) NOT NULL
@@ -7,10 +7,10 @@ CREATE TABLE StoreOwner (
 
 CREATE TABLE Store (
                        store_id SERIAL PRIMARY KEY,
-                       store_owner_id INTEGER NOT NULL,
+                       owner_id INTEGER NOT NULL,
                        name VARCHAR(255) NOT NULL,
-                       FOREIGN KEY (store_owner_id)
-                           REFERENCES StoreOwner(store_owner_id)
+                       FOREIGN KEY (owner_id)
+                           REFERENCES Owner(owner_id)
                            ON DELETE CASCADE -- If the owner is deleted, their stores are too
 );
 

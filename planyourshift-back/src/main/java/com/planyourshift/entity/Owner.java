@@ -6,16 +6,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
 
-import java.util.Date;
-
 @Data
 @Entity
-@Table(name = "StoreOwner")
-public class StoreOwner {
+@Table(name = "Owner")
+public class Owner {
 
     @Id
-    @Column(name = "store_owner_id")
-    private String storeOwnerID;
+    @Column(name = "owner_id")
+    private String ownerId;
 
     private String name;
     private String email;
