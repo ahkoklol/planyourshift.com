@@ -1,0 +1,54 @@
+# .github/workflows/ci-backend-checkout.yml
+
+name: Checkout Microservice CI (Build & Test)
+
+on:
+  # Triggers for all pushes and pull requests targeting the main or dev branches
+  push:
+    branches:
+      - main
+      - dev
+    paths:
+      # Only run if files in the checkout directory have changed
+      - "back/checkout/**"
+  pull_request:
+    branches:
+      - main
+      - dev
+    paths:
+      - "back/checkout/**"
+
+# Define global settings for the job
+defaults:
+  run:
+    # Set the default working directory to the checkout service folder
+    working-directory: back/checkout
+
+jobs:
+  build_and_test:
+    name: Build, Test, and Package
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: "21"
+          distribution: "temurin"
+          # Enable built-in Gradle dependency caching
+          cache: "maven"
+
+      - name: Build and Test with Maven
+        # The '-B' flag runs in batch mode (non-interactive).
+        # Assuming the Maven executable is on the PATH after setup-java.
+        run: mvn -B package
+
+      - name: Upload Build Artifact (Optional)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: checkout-jar
+          path: back/checkout/target/*.jar
