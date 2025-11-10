@@ -10,19 +10,19 @@ on:
       - dev
     paths:
       # Only run if files in the products directory have changed
-      - "front/**"
+      - "planyourshift-front/**"
   pull_request:
     branches:
       - main
       - dev
     paths:
-      - "front/**"
+      - "planyourshift-front/**"
 
 # Define global settings for the job
 defaults:
   run:
     # Set the default working directory to the frontend folder
-    working-directory: front
+    working-directory: planyourshift-front
 
 jobs:
   ci:
@@ -38,7 +38,7 @@ jobs:
         with:
           node-version: 22
           cache: "npm"
-          cache-dependency-path: front/package-lock.json
+          cache-dependency-path: planyourshift-front/package-lock.json
 
       - name: Install Dependencies
         # Use npm ci for clean and fast installation in CI environments

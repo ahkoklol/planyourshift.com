@@ -10,19 +10,19 @@ on:
       - dev
     paths:
       # Only run if files in the checkout directory have changed
-      - "back/checkout/**"
+      - "planyourshift-back/**"
   pull_request:
     branches:
       - main
       - dev
     paths:
-      - "back/checkout/**"
+      - "planyourshift-back/**"
 
 # Define global settings for the job
 defaults:
   run:
     # Set the default working directory to the checkout service folder
-    working-directory: back/checkout
+    working-directory: planyourshift-back
 
 jobs:
   build_and_test:
@@ -51,4 +51,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: checkout-jar
-          path: back/checkout/target/*.jar
+          path: planyourshift-back/target/*.jar
