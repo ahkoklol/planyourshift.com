@@ -1,5 +1,6 @@
 package com.planyourshift.service;
 
+import com.planyourshift.entity.Employee;
 import com.planyourshift.entity.Owner;
 import com.planyourshift.entity.Store;
 import com.planyourshift.repository.OwnerRepository;
@@ -69,7 +70,12 @@ public class StoreService {
         return storeRepository.findAllByOwnerId(ownerId);
     }
 
-    private Optional<Store> getStore(String storeId) {
+    /**
+     * Fetch a Store
+     * @param storeId the id of the Store
+     * @return a Store object if found, null otherwise
+     */
+    public Optional<Store> getStore(String storeId) {
         return storeRepository.findById(storeId);
     }
 
@@ -78,7 +84,7 @@ public class StoreService {
      * @param storeId the id of the Store
      */
     public void deleteStore(String storeId) {
-        Optional<Store>  existingStore = getStore(storeId);
+        Optional<Store> existingStore = getStore(storeId);
         if (existingStore.isEmpty()) {
             log.info("Store with id {} does not exist", storeId);
             throw new IllegalArgumentException("Store with id " + storeId + " does not exist");

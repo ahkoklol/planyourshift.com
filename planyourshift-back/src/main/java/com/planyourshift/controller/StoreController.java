@@ -1,6 +1,8 @@
 package com.planyourshift.controller;
 
+import com.planyourshift.entity.Employee;
 import com.planyourshift.entity.Store;
+import com.planyourshift.service.EmployeeService;
 import com.planyourshift.service.StoreService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +21,9 @@ public class StoreController {
     @Autowired
     private StoreService storeService;
 
+    @Autowired
+    private EmployeeService employeeService;
+
     @PostMapping("/{ownerId}")
     public ResponseEntity<Store> createStore(@RequestBody Store store, @PathVariable String ownerId) {
         Store result = storeService.createStore(store, ownerId);
@@ -35,6 +40,18 @@ public class StoreController {
     @DeleteMapping("/{storeId}")
     public ResponseEntity<Void> deleteStore(@PathVariable String storeId) {
         storeService.deleteStore(storeId);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{storeId}/employees")
+    public ResponseEntity<List<Employee>> getEmployees(@PathVariable String storeId) {
+        List<Employee> list = employeeService.getAllEmployeesByStore(storeId);
+        return ResponseEntity.ok(list);
+    }
+
+    @PostMapping("/{storeId}/employees")
+    public ResponseEntity<Void> addEmployee(@PathVariable String storeId, @RequestBody Employee employee) {
+        employeeService.createEmployee(employee, storeId);
         return ResponseEntity.ok().build();
     }
 
