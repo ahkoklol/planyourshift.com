@@ -10,11 +10,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import com.planyourshift.llm.LLM;
-import com.planyourshift.repository.StoreRepository;
-import com.planyourshift.repository.EmployeeRepository;
 
 @Service
 public class SchedulingService {
@@ -41,7 +38,7 @@ public class SchedulingService {
         // 1. Data Collection
         List<Employee> employees = employeeService.getAllEmployeesByOwner(ownerId);
         List<Store> stores = storeService.getStores(ownerId);
-        List<StoreDaySchedule> schedules = storeDayScheduleService.getStoreDaySchedules(ownerId);
+        List<StoreDaySchedule> storeSchedules = storeDayScheduleService.getStoreDaySchedules(ownerId);
 
         if (employees.isEmpty() || stores.isEmpty()) {
             throw new IllegalArgumentException("Cannot generate schedule: No employees or stores found for ownerId " + ownerId);
@@ -51,7 +48,7 @@ public class SchedulingService {
         var structuredConstraints = llm.parseSchedulingRequirements(employees, stores);
 
         // 3. OR-Tools Optimization (The OR-Tools logic goes here)
-        var generatedShifts = runOrToolsSolver(employees, stores, structuredConstraints, startOfWeek);
+        var generatedShifts = runOrToolsSolver(employees, stores, storeSchedules, structuredConstraints, startOfWeek);
 
         // 4. LLM Post-processing (Optional: Review/Summary)
         llm.reviewSchedule(generatedShifts);
@@ -65,7 +62,8 @@ public class SchedulingService {
      */
     private List<Shift> runOrToolsSolver(
             List<Employee> employees,
-            List<com.planyourshift.entity.Store> stores,
+            List<Store> stores,
+            List<StoreDaySchedule> storeSchedules,
             Map<String, Object> constraints,
             LocalDate startOfWeek) {
 
