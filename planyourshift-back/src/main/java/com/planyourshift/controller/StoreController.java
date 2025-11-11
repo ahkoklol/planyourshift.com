@@ -43,15 +43,15 @@ public class StoreController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/{storeId}/employees")
-    public ResponseEntity<List<Employee>> getEmployees(@PathVariable String storeId) {
-        List<Employee> list = employeeService.getAllEmployeesByStore(storeId);
+    @GetMapping("/{ownerId}/employees")
+    public ResponseEntity<List<Employee>> getEmployees(@PathVariable String ownerId) {
+        List<Employee> list = employeeService.getAllEmployeesByOwner(ownerId);
         return ResponseEntity.ok(list);
     }
 
-    @PostMapping("/{storeId}/employees")
-    public ResponseEntity<Void> addEmployee(@PathVariable String storeId, @RequestBody Employee employee) {
-        employeeService.createEmployee(employee, storeId);
+    @PostMapping("/{ownerId}/employees")
+    public ResponseEntity<Void> addEmployee(@PathVariable String ownerId, @RequestBody Employee employee) {
+        employeeService.createEmployee(employee, ownerId);
         return ResponseEntity.ok().build();
     }
 

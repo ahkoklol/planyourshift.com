@@ -15,8 +15,8 @@ public class Employee {
     @Column(name = "employee_id")
     private String employeeId;
 
-    @Column(name = "store_id")
-    private String storeId;
+    @Column(name = "owner_id")
+    private String ownerId;
 
     @Column(name = "first_name")
     private String firstName;

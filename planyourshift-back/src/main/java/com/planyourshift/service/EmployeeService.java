@@ -23,14 +23,14 @@ public class EmployeeService {
     @Autowired
     private StoreService storeService;
 
-    public void createEmployee(Employee employee, String storeId) {
+    public void createEmployee(Employee employee, String ownerId) {
         Optional<Employee> existingEmployee = getEmployeeByEmail(employee.getEmail());
         if (existingEmployee.isPresent()) {
             log.info("Employee already exists");
             throw new IllegalArgumentException("Employee already exists");
         }
         employee.setEmployeeId(UUID.randomUUID().toString());
-        employee.setStoreId(storeId);
+        employee.setOwnerId(ownerId);
         employeeRepository.save(employee);
         log.info("Employee created");
     }
@@ -84,17 +84,17 @@ public class EmployeeService {
 
     /**
      * Fetch all Employees for a Store
-     * @param storeId the id of the Store
+     * @param ownerId the id of the Store
      * @return a list of Employees
      */
-    public List<Employee> getAllEmployeesByStore(String storeId) {
-        Optional<Store> existingStore = storeService.getStore(storeId);
+    public List<Employee> getAllEmployeesByOwner(String ownerId) {
+        Optional<Store> existingStore = storeService.getStore(ownerId);
         if (existingStore.isEmpty()) {
-            log.info("Store with id {} not found ", storeId);
-            throw new IllegalArgumentException("Store with id " + storeId + " not found");
+            log.info("Store with id {} not found ", ownerId);
+            throw new IllegalArgumentException("Store with id " + ownerId + " not found");
         }
-        List<Employee> list = employeeRepository.findAllByStoreId(storeId);
-        log.info("Found {} employees for store {}", list.size(), storeId);
+        List<Employee> list = employeeRepository.findAllByStoreId(ownerId);
+        log.info("Found {} employees for store {}", list.size(), ownerId);
         return  list;
     }
 }

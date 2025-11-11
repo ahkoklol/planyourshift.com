@@ -1,12 +1,12 @@
 CREATE TABLE Owner (
-                            owner_id SERIAL PRIMARY KEY,
+                            owner_id VARCHAR(255) PRIMARY KEY,
                             name VARCHAR(255) NOT NULL,
                             email VARCHAR(255) UNIQUE NOT NULL,
                             password VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE Store (
-                       store_id SERIAL PRIMARY KEY,
+                       store_id VARCHAR(255) PRIMARY KEY,
                        owner_id INTEGER NOT NULL,
                        name VARCHAR(255) NOT NULL,
                        FOREIGN KEY (owner_id)
@@ -15,20 +15,22 @@ CREATE TABLE Store (
 );
 
 CREATE TABLE StoreDaySchedule (
-                                  store_day_schedule_id SERIAL PRIMARY KEY,
+                                  store_day_schedule_id VARCHAR(255) PRIMARY KEY,
                                   store_id INTEGER NOT NULL,
                                   day_of_week VARCHAR(10) NOT NULL,
-                                  open_time TIME NOT NULL,
-                                  close_time TIME NOT NULL,
+                                  open_time, -- If null, then closed
+                                  close_time, -- If null, then closed
                                   FOREIGN KEY (store_id)
                                       REFERENCES Store(store_id)
                                       ON DELETE CASCADE -- If the store is deleted, its schedules are too
 );
 
 CREATE TABLE Employee (
-                          employee_id SERIAL PRIMARY KEY,
-                          store_id INTEGER NOT NULL,
-                          name VARCHAR(255) NOT NULL,
+                          employee_id VARCHAR(255) PRIMARY KEY,
+                          owner_id INTEGER NOT NULL,
+                          first_name VARCHAR(255) NOT NULL,
+                          last_name VARCHAR(255) NOT NULL,
+                          email_name VARCHAR(255) NOT NULL,
                           required_hours DECIMAL(4, 2),
                           constraints TEXT,
                           preferences TEXT,
@@ -38,7 +40,7 @@ CREATE TABLE Employee (
 );
 
 CREATE TABLE Shift (
-                       shift_id SERIAL PRIMARY KEY,
+                       shift_id VARCHAR(255) PRIMARY KEY,
                        employee_id INTEGER NOT NULL,
                        store_id INTEGER NOT NULL,
                        day DATE NOT NULL,
@@ -53,7 +55,7 @@ CREATE TABLE Shift (
 );
 
 CREATE TABLE GeneratedSchedule (
-                                   generated_schedule_id SERIAL PRIMARY KEY,
+                                   generated_schedule_id VARCHAR(255) PRIMARY KEY,
                                    store_id INTEGER NOT NULL,
                                    week DATE NOT NULL,
                                    FOREIGN KEY (store_id)
