@@ -39,8 +39,8 @@ public class OwnerService {
      */
     public Owner register(Owner owner){
         Optional<Owner> optionalOwner = getOwnerByEmail(owner.getEmail());
-        if(optionalOwner.isEmpty()){
-            log.info("Owner with email {} already exists", owner.getEmail());
+        if(optionalOwner.isPresent()){
+            log.error("Owner with email {} already exists", owner.getEmail());
             throw new IllegalArgumentException("Store owner with email " + owner.getEmail() + " already exists");
         }
         owner.setOwnerId(UUID.randomUUID().toString());
@@ -95,12 +95,12 @@ public class OwnerService {
     public boolean login(Owner owner){
         Optional<Owner> optionalOwner = getOwnerByEmail(owner.getEmail());
         if(optionalOwner.isEmpty()){
-            log.info("Store owner with email {} does not exists", owner.getEmail());
+            log.error("Store owner with email {} does not exists", owner.getEmail());
             throw new IllegalArgumentException("Store owner with email " + owner.getEmail() + " does not exists");
         }
         String storedHash = optionalOwner.get().getPassword();
         if (passwordEncoder.matches(owner.getPassword(), storedHash)) {
-            log.info("Login successful for email {}", owner.getEmail());
+            log.error("Login successful for email {}", owner.getEmail());
             return true;
         }
         log.info("Login failed due to bad credentials for email {}", owner.getEmail());

@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/schedules")
@@ -27,8 +28,8 @@ public class ScheduleController {
      * @return The complete list of proposed shifts (the owner's roster).
      */
     @PostMapping("/{ownerId}/generate")
-    public ResponseEntity<List<Shift>> generateSchedule(@PathVariable String ownerId, @RequestParam("weekStart") LocalDate weekStart) {
-        List<Shift> proposedShifts = schedulingService.generateWeeklySchedule(ownerId);
+    public ResponseEntity<Map<String, List<Shift>>> generateSchedule(@PathVariable String ownerId, @RequestParam("weekStart") LocalDate weekStart) {
+        Map<String, List<Shift>> proposedShifts = schedulingService.generateWeeklySchedule(ownerId);
         return ResponseEntity.ok(proposedShifts);
     }
 

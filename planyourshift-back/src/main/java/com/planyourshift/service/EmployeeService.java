@@ -1,6 +1,7 @@
 package com.planyourshift.service;
 
 import com.planyourshift.entity.Employee;
+import com.planyourshift.entity.Owner;
 import com.planyourshift.entity.Store;
 import com.planyourshift.repository.EmployeeRepository;
 import org.slf4j.Logger;
@@ -23,6 +24,8 @@ public class EmployeeService {
 
     @Autowired
     private StoreService storeService;
+
+    @Autowired OwnerService ownerService;
 
     public void createEmployee(Employee employee, String ownerId) {
         if (!Objects.equals(ownerId, employee.getOwnerId())) {
@@ -65,7 +68,7 @@ public class EmployeeService {
     public void updateEmployee(Employee employee, String employeeId) {
         Optional<Employee> existingEmployee = getEmployee(employeeId);
         if (existingEmployee.isEmpty()) {
-            log.info("Employee with id {} not found ", employeeId);
+            log.error("Employee with id {} not found ", employeeId);
             throw new IllegalArgumentException("Employee with id " + employeeId + " not found");
         }
         employeeRepository.save(employee);
@@ -79,7 +82,7 @@ public class EmployeeService {
     public void deleteEmployee(String employeeId) {
         Optional<Employee> existingEmployee = getEmployee(employeeId);
         if (existingEmployee.isEmpty()) {
-            log.info("Employee with id {} not found ", employeeId);
+            log.error("Employee with id {} not found ", employeeId);
             throw new IllegalArgumentException("Employee with id " + employeeId + " not found");
         }
         employeeRepository.delete(existingEmployee.get());
@@ -92,10 +95,10 @@ public class EmployeeService {
      * @return a list of Employees
      */
     public List<Employee> getAllEmployeesByOwner(String ownerId) {
-        Optional<Store> existingStore = storeService.getStore(ownerId);
-        if (existingStore.isEmpty()) {
-            log.info("Store with id {} not found ", ownerId);
-            throw new IllegalArgumentException("Store with id " + ownerId + " not found");
+        Optional<Owner> existingOwner = ownerService.getOwner(ownerId);
+        if (existingOwner.isEmpty()) {
+            log.error("Owner with id {} not found ", ownerId);
+            throw new IllegalArgumentException("Owner with id " + ownerId + " not found");
         }
         List<Employee> list = employeeRepository.findAllByOwnerId(ownerId);
         log.info("Found {} employees for store {}", list.size(), ownerId);

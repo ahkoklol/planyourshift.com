@@ -39,12 +39,12 @@ public class StoreService {
         }
         Optional<Store> existingStore = getStoreByOwnerAndName(store.getName(), store.getOwnerId());
         if (existingStore.isPresent()) {
-            log.info("Store with name {} already exists", store.getName());
+            log.error("Store with name {} already exists", store.getName());
             throw new IllegalArgumentException("Store with name " + store.getName() + " already exists");
         }
         Optional<Owner> existingOwner = ownerService.getOwner(store.getOwnerId());
         if (existingOwner.isEmpty()) {
-            log.info("Owner with id {} does not exist", store.getOwnerId());
+            log.error("Owner with id {} does not exist", store.getOwnerId());
             throw new IllegalArgumentException("Owner with name " + store.getOwnerId() + " does not exist");
         }
         store.setStoreId(UUID.randomUUID().toString());
@@ -69,7 +69,7 @@ public class StoreService {
     public List<Store> getStores(String ownerId) {
         Optional<Owner> existingOwner = ownerService.getOwner(ownerId);
         if (existingOwner.isEmpty()) {
-            log.info("Owner with id {} does not exist", ownerId);
+            log.error("Owner with id {} does not exist", ownerId);
             throw new IllegalArgumentException("Owner with name " + ownerId + " does not exist");
         }
         return storeRepository.findAllByOwnerId(ownerId);

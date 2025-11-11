@@ -1,16 +1,18 @@
 package com.planyourshift;
 
 import com.planyourshift.entity.*;
+import com.planyourshift.llm.Mistral;
 import com.planyourshift.service.*;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 
-@TestPropertySource(locations = "classpath:application-test.properties")
 @Transactional
 public class IntegrationTests extends PostgresTestcontainer {
 
@@ -31,6 +33,8 @@ public class IntegrationTests extends PostgresTestcontainer {
 
     @Autowired
     private SchedulingService schedulingService;
+
+    private Mistral mistral;
 
     private Owner createOwner(String name, String email, String password) {
         Owner owner = new Owner();
@@ -68,6 +72,11 @@ public class IntegrationTests extends PostgresTestcontainer {
         return employee;
     }
 
+    @BeforeEach
+    void setup() {
+        mistral = Mockito.mock(Mistral.class);
+    }
+
     @Test
     void testFlow() {
         // create owner
@@ -76,7 +85,7 @@ public class IntegrationTests extends PostgresTestcontainer {
         // owner adds employees to store
         // owner generates schedules
 
-        Owner owner = ownerService.register(createOwner("testname", "testemail", "testpassword"));
+        Owner owner = ownerService.register(createOwner("testname", "testemail", "Testpassword1!"));
         Store store = storeService.createStore(createStore(owner.getOwnerId(), "teststore"), owner.getOwnerId());
         StoreDaySchedule monday = storeDayScheduleService.createDaySchedule(createStoreDaySchedule(store.getStoreId(), "MONDAY", LocalTime.of(9, 0), LocalTime.of(20, 30)), store.getStoreId());
         StoreDaySchedule tuesday = storeDayScheduleService.createDaySchedule(createStoreDaySchedule(store.getStoreId(), "MONDAY", LocalTime.of(9, 0), LocalTime.of(20, 30)), store.getStoreId());
@@ -86,7 +95,7 @@ public class IntegrationTests extends PostgresTestcontainer {
         StoreDaySchedule saturday = storeDayScheduleService.createDaySchedule(createStoreDaySchedule(store.getStoreId(), "MONDAY", LocalTime.of(9, 0), LocalTime.of(22, 0)), store.getStoreId());
         StoreDaySchedule sunday = storeDayScheduleService.createDaySchedule(createStoreDaySchedule(store.getStoreId(), "MONDAY", LocalTime.of(9, 0), LocalTime.of(17, 0)), store.getStoreId());
         employeeService.createEmployee(createEmployee(owner.getOwnerId(), "testfirstname", "testlastname", "testemail", "testconstraints", "testpreferences", 45), store.getOwnerId());
-        //List<Shift> schedule = schedulingService.generateWeeklySchedule(store.getStoreId());
-        //System.out.println("Schedule: " + schedule);
+        Map<String, List<Shift>> schedule = schedulingService.generateWeeklySchedule(owner.getOwnerId());
+        System.out.println("Schedule: " + schedule);
     }
 }

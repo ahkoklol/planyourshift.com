@@ -35,7 +35,7 @@ public class StoreDayScheduleService {
         }
         Optional<Store> existingStore = storeService.getStore(storeId);
         if (existingStore.isEmpty()) {
-            log.info("Store {} not found", storeId);
+            log.error("Store {} not found", storeId);
             throw new IllegalArgumentException("Store " + storeId + " not found");
         }
         storeDaySchedule.setStoreDayScheduleId(UUID.randomUUID().toString());

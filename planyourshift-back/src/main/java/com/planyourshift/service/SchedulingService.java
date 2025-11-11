@@ -39,6 +39,7 @@ public class SchedulingService {
 
     @Autowired
     private LLM llm;
+
     @Autowired
     private ShiftService shiftService;
 
@@ -47,7 +48,7 @@ public class SchedulingService {
      * @param ownerId The ID of the owner/brand.
      * @return A list of generated shifts.
      */
-    public List<Shift> generateWeeklySchedule(String ownerId) {
+    public Map<String, List<Shift>> generateWeeklySchedule(String ownerId) {
         LocalDate startOfWeek = LocalDate.now().with(TemporalAdjusters.nextOrSame(MONDAY));
         log.info("Generating schedule for owner {} starting week {}", ownerId, startOfWeek);
 
@@ -61,7 +62,7 @@ public class SchedulingService {
         }
 
         // 2. LLM Pre-processing (Convert natural language to structured constraints)
-        var structuredConstraints = llm.parseSchedulingRequirements(employees, stores);
+        //var structuredConstraints = llm.parseSchedulingRequirements(employees, stores);
 
         // 3. OR-Tools Optimization (The OR-Tools logic goes here)
         // not done for now
@@ -81,7 +82,7 @@ public class SchedulingService {
         schedules.putAll(employeeSchedules);
 
         log.info("Schedule generation complete");
-        return (List<Shift>) schedules;
+        return schedules;
     }
 
     /**

@@ -213,4 +213,31 @@ public class Mistral implements LLM {
         }
     }
 
+    /**
+     * Strips markdown code blocks (```json\n...\n```) from the LLM response.
+     */
+    private String cleanJsonOutput(String response) {
+        if (response == null) {
+            return "[]";
+        }
+        // Efficiently strip leading/trailing whitespace and the ```json ... ``` wrapper
+        response = response.strip();
+        if (response.startsWith("```")) {
+            // Find the index of the first actual JSON character (after ```json\n)
+            int start = response.indexOf('{');
+            if (start == -1) {
+                start = response.indexOf('[');
+            }
+
+            // Find the index of the last actual JSON character (before ```)
+            int end = response.lastIndexOf("```");
+
+            // If a start and end marker are found, extract the clean JSON substring
+            if (start != -1 && end > start) {
+                return response.substring(start, end).strip();
+            }
+        }
+        return response;
+    }
+
 }
