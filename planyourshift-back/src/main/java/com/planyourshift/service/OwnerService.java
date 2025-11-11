@@ -35,8 +35,9 @@ public class OwnerService {
     /**
      * Creates an Owner
      * @param owner an Owner object
+     * @return the created Owner object
      */
-    public void register(Owner owner){
+    public Owner register(Owner owner){
         Optional<Owner> optionalOwner = getOwnerByEmail(owner.getEmail());
         if(optionalOwner.isEmpty()){
             log.info("Owner with email {} already exists", owner.getEmail());
@@ -45,8 +46,7 @@ public class OwnerService {
         owner.setOwnerId(UUID.randomUUID().toString());
         validatePasswordStrength(owner.getPassword());
         owner.setPassword(passwordEncoder.encode(owner.getPassword()));
-        ownerRepository.save(owner);
-        log.info("Owner with email {} registered", owner.getEmail());
+        return ownerRepository.save(owner);
     }
 
     /**

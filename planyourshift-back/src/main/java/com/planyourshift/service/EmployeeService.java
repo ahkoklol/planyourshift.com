@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,13 +25,16 @@ public class EmployeeService {
     private StoreService storeService;
 
     public void createEmployee(Employee employee, String ownerId) {
+        if (!Objects.equals(ownerId, employee.getOwnerId())) {
+            log.info("Owner Id does not match");
+            throw new IllegalArgumentException("Owner Id does not match");
+        }
         Optional<Employee> existingEmployee = getEmployeeByEmail(employee.getEmail());
         if (existingEmployee.isPresent()) {
             log.info("Employee already exists");
             throw new IllegalArgumentException("Employee already exists");
         }
         employee.setEmployeeId(UUID.randomUUID().toString());
-        employee.setOwnerId(ownerId);
         employeeRepository.save(employee);
         log.info("Employee created");
     }

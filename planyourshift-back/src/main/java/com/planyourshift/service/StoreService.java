@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -32,15 +33,19 @@ public class StoreService {
      * @return a Store object
      */
     public Store createStore(Store store, String ownerId) {
+        if (!Objects.equals(ownerId, store.getOwnerId())) {
+            log.error("Owner id and store owner id do not match");
+            throw new IllegalArgumentException("Owner id and store owner id do not match");
+        }
         Optional<Store> existingStore = getStoreByOwnerAndName(store.getName(), store.getOwnerId());
         if (existingStore.isPresent()) {
             log.info("Store with name {} already exists", store.getName());
             throw new IllegalArgumentException("Store with name " + store.getName() + " already exists");
         }
-        Optional<Owner> existingOwner = ownerService.getOwner(ownerId);
+        Optional<Owner> existingOwner = ownerService.getOwner(store.getOwnerId());
         if (existingOwner.isEmpty()) {
-            log.info("Owner with id {} does not exist", ownerId);
-            throw new IllegalArgumentException("Owner with name " + ownerId + " does not exist");
+            log.info("Owner with id {} does not exist", store.getOwnerId());
+            throw new IllegalArgumentException("Owner with name " + store.getOwnerId() + " does not exist");
         }
         store.setStoreId(UUID.randomUUID().toString());
         return storeRepository.save(store);

@@ -22,7 +22,11 @@ public class OwnerController {
 
     @PostMapping("/register")
     public ResponseEntity<Void> register(@RequestBody Owner storeOwner){
-        ownerService.register(storeOwner);
+        Owner result = ownerService.register(storeOwner);
+        if (result == null){
+            return ResponseEntity.badRequest().build();
+        }
+        log.info("Owner egistered successfully");
         return ResponseEntity.ok().build();
     }
 

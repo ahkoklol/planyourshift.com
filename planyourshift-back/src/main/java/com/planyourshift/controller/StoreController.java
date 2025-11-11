@@ -26,7 +26,7 @@ public class StoreController {
 
     @PostMapping("/{ownerId}")
     public ResponseEntity<Store> createStore(@RequestBody Store store, @PathVariable String ownerId) {
-        Store result = storeService.createStore(store, ownerId);
+        Store result = storeService.createStore(store,  ownerId);
         return ResponseEntity.ok(result);
     }
 
