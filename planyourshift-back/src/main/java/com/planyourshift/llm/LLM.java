@@ -3,7 +3,9 @@ package com.planyourshift.llm;
 import com.planyourshift.entity.Employee;
 import com.planyourshift.entity.Shift;
 import com.planyourshift.entity.Store;
+import com.planyourshift.entity.StoreDaySchedule;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -25,4 +27,16 @@ public interface LLM {
      * @return A natural language summary or score.
      */
     String reviewSchedule(List<Shift> generatedShifts);
+
+    /**
+     * Uses the LLM (Mistral) to generate a complete list of shifts for the week.
+     * This replaces the optimization solver logic.
+     * @param employees List of employees, their constraints, and preferences.
+     * @param stores List of all available stores and their names.
+     * @param storeSchedules List of store operating hours (nullable times indicate closed days).
+     * @param startOfWeek The start date (Monday) of the scheduling week.
+     * @return A list of generated Shift objects (the Owner's Roster).
+     */
+    List<Shift> generateSchedule(List<Employee> employees, List<Store> stores,
+                                 List<StoreDaySchedule> storeSchedules, LocalDate startOfWeek);
 }

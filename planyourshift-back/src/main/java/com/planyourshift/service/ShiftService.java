@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,6 +26,11 @@ public class ShiftService {
     public void createShift(Shift shift) {
         shiftRepository.save(shift);
         log.info("Shift created");
+    }
+
+    public void saveAllShifts(List<Shift> shifts) {
+        shiftRepository.saveAll(shifts);
+        log.info("Shifts saved");
     }
 
     /**

@@ -1,5 +1,7 @@
 package com.planyourshift.service;
 
+import com.google.ortools.Loader;
+import com.google.ortools.sat.*;
 import com.planyourshift.entity.*;
 import com.planyourshift.repository.GeneratedScheduleRepository;
 import org.slf4j.Logger;
@@ -11,11 +13,12 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.TemporalAdjusters;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import com.planyourshift.llm.LLM;
+
+import static java.time.DayOfWeek.*;
 
 @Service
 public class SchedulingService {
@@ -36,6 +39,8 @@ public class SchedulingService {
 
     @Autowired
     private LLM llm;
+    @Autowired
+    private ShiftService shiftService;
 
     /**
      * Orchestrates the shift generation process using LLM and OR-Tools.
@@ -43,7 +48,7 @@ public class SchedulingService {
      * @return A list of generated shifts.
      */
     public List<Shift> generateWeeklySchedule(String ownerId) {
-        LocalDate startOfWeek = LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.MONDAY));
+        LocalDate startOfWeek = LocalDate.now().with(TemporalAdjusters.nextOrSame(MONDAY));
         log.info("Generating schedule for owner {} starting week {}", ownerId, startOfWeek);
 
         // 1. Data Collection
@@ -59,12 +64,24 @@ public class SchedulingService {
         var structuredConstraints = llm.parseSchedulingRequirements(employees, stores);
 
         // 3. OR-Tools Optimization (The OR-Tools logic goes here)
-        var generatedShifts = runOrToolsSolver(employees, stores, storeSchedules, structuredConstraints, startOfWeek);
+        // not done for now
+        // var generatedShifts = runOrToolsSolver(employees, stores, storeSchedules, structuredConstraints, startOfWeek);
+        // use LLM generation instead
+        List<Shift> ownerRoster = llm.generateSchedule(employees, stores, storeSchedules, startOfWeek);
+        llm.reviewSchedule(ownerRoster);
 
-        // 4. LLM Post-processing (Optional: Review/Summary)
-        llm.reviewSchedule(generatedShifts);
-        log.info("Schedule generation complete, generated {} shifts", generatedShifts.size());
-        return generatedShifts;
+        shiftService.saveAllShifts(ownerRoster);
+
+        // 6. Structure Output for Owner/Employee (Fulfilling user requirement)
+        Map<String, List<Shift>> schedules = new HashMap<>();
+        schedules.put("ownerRoster", ownerRoster);
+        Map<String, List<Shift>> employeeSchedules = ownerRoster.stream()
+                .collect(Collectors.groupingBy(Shift::getEmployeeId));
+        // Add each employee's schedule to the final output map using their ID as the key
+        schedules.putAll(employeeSchedules);
+
+        log.info("Schedule generation complete");
+        return (List<Shift>) schedules;
     }
 
     /**
@@ -74,7 +91,7 @@ public class SchedulingService {
     private List<Shift> runOrToolsSolver(
             List<Employee> employees,
             List<Store> stores,
-            List<StoreDaySchedule> storeSchedules,
+            List<StoreDaySchedule> storeSchedulesList,
             Map<String, Object> constraints,
             LocalDate startOfWeek) {
 
@@ -94,11 +111,7 @@ public class SchedulingService {
         // 7. Extract the solution and map it to a List<Shift> objects.
         // ----------------------------------------------
 
-        // Placeholder return
-        return List.of(
-                // Example generated shift
-                new Shift("shift-1", employees.get(0).getEmployeeId(), stores.get(0).getStoreId(), startOfWeek.plusDays(1), LocalTime.of(9, 0), LocalTime.of(17, 0))
-        );
+        return new ArrayList<>();
     }
 
     /**

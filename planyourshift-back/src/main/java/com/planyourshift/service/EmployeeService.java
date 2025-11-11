@@ -93,7 +93,7 @@ public class EmployeeService {
             log.info("Store with id {} not found ", ownerId);
             throw new IllegalArgumentException("Store with id " + ownerId + " not found");
         }
-        List<Employee> list = employeeRepository.findAllByStoreId(ownerId);
+        List<Employee> list = employeeRepository.findAllByOwnerId(ownerId);
         log.info("Found {} employees for store {}", list.size(), ownerId);
         return  list;
     }

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface EmployeeRepository extends JpaRepository<Employee,String> {
-    List<Employee> findAllByStoreId(String storeId);
+    List<Employee> findAllByOwnerId(String storeId);
 
     Optional<Employee> findByEmail(String email);
 }
