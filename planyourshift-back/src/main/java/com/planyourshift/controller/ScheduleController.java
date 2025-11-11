@@ -27,16 +27,8 @@ public class ScheduleController {
      * @return The complete list of proposed shifts (the owner's roster).
      */
     @PostMapping("/{ownerId}/generate")
-    public ResponseEntity<List<Shift>> generateSchedule(
-            @PathVariable String ownerId,
-            @RequestParam("weekStart") LocalDate weekStart) {
-
-        log.info("Generating schedule for owner {} starting week {}", ownerId, weekStart);
-
-        // This method orchestrates LLM for constraint parsing and OR-Tools for optimization.
-        List<Shift> proposedShifts = schedulingService.generateWeeklySchedule(ownerId, weekStart);
-
-        log.info("Schedule generation complete. Found {} proposed shifts.", proposedShifts.size());
+    public ResponseEntity<List<Shift>> generateSchedule(@PathVariable String ownerId, @RequestParam("weekStart") LocalDate weekStart) {
+        List<Shift> proposedShifts = schedulingService.generateWeeklySchedule(ownerId);
         return ResponseEntity.ok(proposedShifts);
     }
 

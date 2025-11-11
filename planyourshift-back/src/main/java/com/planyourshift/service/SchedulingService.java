@@ -4,10 +4,16 @@ import com.planyourshift.entity.Employee;
 import com.planyourshift.entity.Shift;
 import com.planyourshift.entity.Store;
 import com.planyourshift.entity.StoreDaySchedule;
+import com.planyourshift.repository.GeneratedScheduleRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +21,8 @@ import com.planyourshift.llm.LLM;
 
 @Service
 public class SchedulingService {
+
+    private static final Logger log = LoggerFactory.getLogger(SchedulingService.class);
 
     @Autowired
     private EmployeeService employeeService;
@@ -26,15 +34,20 @@ public class SchedulingService {
     private StoreDayScheduleService storeDayScheduleService;
 
     @Autowired
+    GeneratedScheduleRepository generatedScheduleRepository;
+
+    @Autowired
     private LLM llm;
 
     /**
      * Orchestrates the shift generation process using LLM and OR-Tools.
      * @param ownerId The ID of the owner/brand.
-     * @param startOfWeek The start date of the week to schedule.
      * @return A list of generated shifts.
      */
-    public List<Shift> generateWeeklySchedule(String ownerId, LocalDate startOfWeek) {
+    public List<Shift> generateWeeklySchedule(String ownerId) {
+        LocalDate startOfWeek = LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.MONDAY));
+        log.info("Generating schedule for owner {} starting week {}", ownerId, startOfWeek);
+
         // 1. Data Collection
         List<Employee> employees = employeeService.getAllEmployeesByOwner(ownerId);
         List<Store> stores = storeService.getStores(ownerId);
@@ -52,7 +65,7 @@ public class SchedulingService {
 
         // 4. LLM Post-processing (Optional: Review/Summary)
         llm.reviewSchedule(generatedShifts);
-
+        log.info("Schedule generation complete, generated {} shifts", generatedShifts.size());
         return generatedShifts;
     }
 
