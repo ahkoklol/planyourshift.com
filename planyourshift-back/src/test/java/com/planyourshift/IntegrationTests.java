@@ -94,7 +94,9 @@ public class IntegrationTests extends PostgresTestcontainer {
         StoreDaySchedule friday = storeDayScheduleService.createDaySchedule(createStoreDaySchedule(store.getStoreId(), "MONDAY", LocalTime.of(9, 0), LocalTime.of(22, 0)), store.getStoreId());
         StoreDaySchedule saturday = storeDayScheduleService.createDaySchedule(createStoreDaySchedule(store.getStoreId(), "MONDAY", LocalTime.of(9, 0), LocalTime.of(22, 0)), store.getStoreId());
         StoreDaySchedule sunday = storeDayScheduleService.createDaySchedule(createStoreDaySchedule(store.getStoreId(), "MONDAY", LocalTime.of(9, 0), LocalTime.of(17, 0)), store.getStoreId());
-        employeeService.createEmployee(createEmployee(owner.getOwnerId(), "testfirstname", "testlastname", "testemail", "testconstraints", "testpreferences", 45), store.getOwnerId());
+        employeeService.createEmployee(createEmployee(owner.getOwnerId(), "testfirstname1", "testlastname1", "testemail1", "", "sunday off", 45), store.getOwnerId());
+        employeeService.createEmployee(createEmployee(owner.getOwnerId(), "testfirstname2", "testlastname2", "testemail2", "", "", 45), store.getOwnerId());
+        employeeService.createEmployee(createEmployee(owner.getOwnerId(), "testfirstname3", "testlastname3", "testemail3", "", "wednesday off", 45), store.getOwnerId());
         Map<String, List<Shift>> schedule = schedulingService.generateWeeklySchedule(owner.getOwnerId());
         System.out.println("Schedule: " + schedule);
     }
