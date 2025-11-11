@@ -36,6 +36,11 @@
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
         <dependency>
+            <groupId>com.google.ortools</groupId>
+            <artifactId>ortools-java</artifactId>
+            <version>9.14.6206</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-starter-model-mistral-ai</artifactId>
         </dependency>
