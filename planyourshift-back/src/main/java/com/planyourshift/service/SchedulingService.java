@@ -1,9 +1,6 @@
 package com.planyourshift.service;
 
-import com.planyourshift.entity.Employee;
-import com.planyourshift.entity.Shift;
-import com.planyourshift.entity.Store;
-import com.planyourshift.entity.StoreDaySchedule;
+import com.planyourshift.entity.*;
 import com.planyourshift.repository.GeneratedScheduleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +13,7 @@ import java.time.LocalTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import com.planyourshift.llm.LLM;
 
@@ -101,5 +99,15 @@ public class SchedulingService {
                 // Example generated shift
                 new Shift("shift-1", employees.get(0).getEmployeeId(), stores.get(0).getStoreId(), startOfWeek.plusDays(1), LocalTime.of(9, 0), LocalTime.of(17, 0))
         );
+    }
+
+    /**
+     * Saves a GeneratedSchedule
+     * @param generatedSchedule a GeneratedScheduleObject
+     */
+    public void saveGeneratedSchedule(GeneratedSchedule generatedSchedule) {
+        generatedSchedule.setGeneratedScheduleId(UUID.randomUUID().toString());
+        generatedScheduleRepository.save(generatedSchedule);
+        log.info("Generated schedule {} saved", generatedSchedule.getGeneratedScheduleId());
     }
 }
