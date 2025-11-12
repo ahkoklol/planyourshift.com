@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
+
+import java.time.DayOfWeek;
 import java.time.LocalTime;
 
 @Data
@@ -20,7 +22,7 @@ public class StoreDaySchedule {
     private String storeId;
 
     @Column(name = "day_of_week")
-    private String dayOfWeek;
+    private DayOfWeek dayOfWeek;
 
     @Column(name = "open_time")
     private LocalTime openTime;

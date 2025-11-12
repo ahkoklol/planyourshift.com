@@ -64,7 +64,7 @@ public class SchedulingService {
         List<StoreDaySchedule> storeDaySchedules = storeDayScheduleService.getStoreDaySchedules(ownerId);
 
         // Build weekly store schedule map: DAY_NAME -> (openTime -> closeTime)
-        Map<String, Map<LocalTime, LocalTime>> weeklyStoreSchedule = new HashMap<>();
+        Map<DayOfWeek, Map<LocalTime, LocalTime>> weeklyStoreSchedule = new HashMap<>();
         storeDaySchedules.forEach(storeDaySchedule -> {
             Map<LocalTime, LocalTime> operatingHours = new HashMap<>();
             operatingHours.put(storeDaySchedule.getOpenTime(), storeDaySchedule.getCloseTime());
@@ -242,10 +242,8 @@ public class SchedulingService {
 
     /**
      * Helper: extract shifts from solver values
-     *
      * NOTE: adjust Shift construction to match your domain class. Here I assume:
      *   public Shift(String employeeId, String dayOfWeek, LocalTime startTime, LocalTime endTime)
-     *
      * If your Shift class differs, replace the construction/setting section accordingly.
      */
     private List<Shift> extractShiftsFromSolution(
@@ -300,87 +298,5 @@ public class SchedulingService {
             }
         }
         return result;
-    }
-
-    /**
-     * Orchestrates the shift generation process using LLM and OR-Tools.
-     * @param ownerId The ID of the owner/brand.
-     * @return A list of generated shifts.
-     */
-    public Map<String, List<Shift>> generateWeeklySchedule(String ownerId) {
-        LocalDate startOfWeek = LocalDate.now().with(TemporalAdjusters.nextOrSame(MONDAY));
-        log.info("Generating schedule for owner {} starting week {}", ownerId, startOfWeek);
-
-        // 1. Data Collection
-        List<Employee> employees = employeeService.getAllEmployeesByOwner(ownerId);
-        List<Store> stores = storeService.getStores(ownerId);
-        List<StoreDaySchedule> storeSchedules = storeDayScheduleService.getStoreDaySchedules(ownerId);
-
-        if (employees.isEmpty() || stores.isEmpty()) {
-            throw new IllegalArgumentException("Cannot generate schedule: No employees or stores found for ownerId " + ownerId);
-        }
-
-        // 2. LLM Pre-processing (Convert natural language to structured constraints)
-        //var structuredConstraints = llm.parseSchedulingRequirements(employees, stores);
-
-        // 3. OR-Tools Optimization (The OR-Tools logic goes here)
-        // not done for now
-        // var generatedShifts = runOrToolsSolver(employees, stores, storeSchedules, structuredConstraints, startOfWeek);
-        // use LLM generation instead
-        List<Shift> ownerRoster = llm.generateSchedule(employees, stores, storeSchedules, startOfWeek);
-        llm.reviewSchedule(ownerRoster);
-
-        shiftService.saveAllShifts(ownerRoster);
-
-        // 6. Structure Output for Owner/Employee (Fulfilling user requirement)
-        Map<String, List<Shift>> schedules = new HashMap<>();
-        schedules.put("ownerRoster", ownerRoster);
-        Map<String, List<Shift>> employeeSchedules = ownerRoster.stream()
-                .collect(Collectors.groupingBy(Shift::getEmployeeId));
-        // Add each employee's schedule to the final output map using their ID as the key
-        schedules.putAll(employeeSchedules);
-
-        log.info("Schedule generation complete");
-        return schedules;
-    }
-
-    /**
-     * Placeholder for the Google OR-Tools implementation.
-     * This is where the core Constraint Programming logic resides.
-     */
-    private List<Shift> runOrToolsSolver(
-            List<Employee> employees,
-            List<Store> stores,
-            List<StoreDaySchedule> storeSchedulesList,
-            Map<String, Object> constraints,
-            LocalDate startOfWeek) {
-
-        // --- GOOGLE OR-TOOLS IMPLEMENTATION DETAILS ---
-        // 1. Initialize the OR-Tools model (e.g., CP-SAT model).
-        // 2. Define Variables (e.g., Boolean variable for (employee, store, time-slot)).
-        //    * Variables: (Employee, StoreId, DayOfWeek, TimeSlot) -> True/False
-        // 3. Apply Hard Constraints (Constraints that must be met):
-        //    * Each employee works their required_hours (from Employee entity).
-        //    * Store operating hours (from StoreDaySchedule entity).
-        //    * Employee "cannot work" constraints (from LLM-processed data).
-        //    * Ensure only one employee per time slot/store (if required, depending on needs).
-        // 4. Apply Soft Constraints (Goals for Optimization):
-        //    * Employee preferences ("prefers working at bagatelle") (from LLM-processed data).
-        // 5. Define Objective Function (Minimize cost of soft constraints not met).
-        // 6. Call the Solver (CpModel.solve()).
-        // 7. Extract the solution and map it to a List<Shift> objects.
-        // ----------------------------------------------
-
-        return new ArrayList<>();
-    }
-
-    /**
-     * Saves a GeneratedSchedule
-     * @param generatedSchedule a GeneratedScheduleObject
-     */
-    public void saveGeneratedSchedule(GeneratedSchedule generatedSchedule) {
-        generatedSchedule.setGeneratedScheduleId(UUID.randomUUID().toString());
-        generatedScheduleRepository.save(generatedSchedule);
-        log.info("Generated schedule {} saved", generatedSchedule.getGeneratedScheduleId());
     }
 }

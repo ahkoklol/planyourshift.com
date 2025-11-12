@@ -9,9 +9,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
+
+import static java.time.DayOfWeek.*;
 
 @Transactional
 public class IntegrationTests extends PostgresTestcontainer {
@@ -51,12 +54,12 @@ public class IntegrationTests extends PostgresTestcontainer {
         return store;
     }
 
-    private StoreDaySchedule createStoreDaySchedule(String storeId, String dayOfWeek, LocalTime openTime, LocalTime closedTime ) {
+    private StoreDaySchedule createStoreDaySchedule(String storeId, DayOfWeek dayOfWeek, LocalTime openTime, LocalTime closedTime ) {
         StoreDaySchedule storeDaySchedule = new StoreDaySchedule();
         storeDaySchedule.setStoreId(storeId);
         storeDaySchedule.setDayOfWeek(dayOfWeek);
         storeDaySchedule.setOpenTime(openTime);
-        storeDaySchedule.setOpenTime(closedTime);
+        storeDaySchedule.setCloseTime(closedTime);
         return storeDaySchedule;
     }
 
@@ -91,27 +94,24 @@ public class IntegrationTests extends PostgresTestcontainer {
         employeeService.createEmployee(createEmployee(owner.getOwnerId(), "testfirstname3", "testlastname3", "testemail3", "", "wednesday off", 45), owner.getOwnerId());
 
         Store store1 = storeService.createStore(createStore(owner.getOwnerId(), "teststore1"), owner.getOwnerId());
-        StoreDaySchedule monday1 = storeDayScheduleService.createDaySchedule(createStoreDaySchedule(store1.getStoreId(), "MONDAY", LocalTime.of(9, 0), LocalTime.of(20, 30)), store1.getStoreId());
-        StoreDaySchedule tuesday1 = storeDayScheduleService.createDaySchedule(createStoreDaySchedule(store1.getStoreId(), "MONDAY", LocalTime.of(9, 0), LocalTime.of(20, 30)), store1.getStoreId());
-        StoreDaySchedule wednesday1 = storeDayScheduleService.createDaySchedule(createStoreDaySchedule(store1.getStoreId(), "MONDAY", LocalTime.of(9, 0), LocalTime.of(20, 30)), store1.getStoreId());
-        StoreDaySchedule thursday1 = storeDayScheduleService.createDaySchedule(createStoreDaySchedule(store1.getStoreId(), "MONDAY", LocalTime.of(9, 0), LocalTime.of(20, 30)), store1.getStoreId());
-        StoreDaySchedule friday1 = storeDayScheduleService.createDaySchedule(createStoreDaySchedule(store1.getStoreId(), "MONDAY", LocalTime.of(9, 0), LocalTime.of(22, 0)), store1.getStoreId());
-        StoreDaySchedule saturday1 = storeDayScheduleService.createDaySchedule(createStoreDaySchedule(store1.getStoreId(), "MONDAY", LocalTime.of(9, 0), LocalTime.of(22, 0)), store1.getStoreId());
-        StoreDaySchedule sunday1 = storeDayScheduleService.createDaySchedule(createStoreDaySchedule(store1.getStoreId(), "MONDAY", LocalTime.of(9, 0), LocalTime.of(17, 0)), store1.getStoreId());
+        StoreDaySchedule monday1 = storeDayScheduleService.createDaySchedule(createStoreDaySchedule(store1.getStoreId(), MONDAY, LocalTime.of(9, 0), LocalTime.of(20, 30)), store1.getStoreId());
+        StoreDaySchedule tuesday1 = storeDayScheduleService.createDaySchedule(createStoreDaySchedule(store1.getStoreId(), TUESDAY, LocalTime.of(9, 0), LocalTime.of(20, 30)), store1.getStoreId());
+        StoreDaySchedule wednesday1 = storeDayScheduleService.createDaySchedule(createStoreDaySchedule(store1.getStoreId(), WEDNESDAY, LocalTime.of(9, 0), LocalTime.of(20, 30)), store1.getStoreId());
+        StoreDaySchedule thursday1 = storeDayScheduleService.createDaySchedule(createStoreDaySchedule(store1.getStoreId(), THURSDAY, LocalTime.of(9, 0), LocalTime.of(20, 30)), store1.getStoreId());
+        StoreDaySchedule friday1 = storeDayScheduleService.createDaySchedule(createStoreDaySchedule(store1.getStoreId(), FRIDAY, LocalTime.of(9, 0), LocalTime.of(22, 0)), store1.getStoreId());
+        StoreDaySchedule saturday1 = storeDayScheduleService.createDaySchedule(createStoreDaySchedule(store1.getStoreId(), SATURDAY, LocalTime.of(9, 0), LocalTime.of(22, 0)), store1.getStoreId());
+        StoreDaySchedule sunday1 = storeDayScheduleService.createDaySchedule(createStoreDaySchedule(store1.getStoreId(), SUNDAY, LocalTime.of(9, 0), LocalTime.of(17, 0)), store1.getStoreId());
 
         Store store2 = storeService.createStore(createStore(owner.getOwnerId(), "teststore2"), owner.getOwnerId());
-        StoreDaySchedule monday2 = storeDayScheduleService.createDaySchedule(createStoreDaySchedule(store2.getStoreId(), "MONDAY", LocalTime.of(9, 0), LocalTime.of(20, 30)), store2.getStoreId());
-        StoreDaySchedule tuesday2 = storeDayScheduleService.createDaySchedule(createStoreDaySchedule(store2.getStoreId(), "MONDAY", LocalTime.of(9, 0), LocalTime.of(20, 30)), store2.getStoreId());
-        StoreDaySchedule wednesday2 = storeDayScheduleService.createDaySchedule(createStoreDaySchedule(store2.getStoreId(), "MONDAY", LocalTime.of(9, 0), LocalTime.of(20, 30)), store2.getStoreId());
-        StoreDaySchedule thursday2 = storeDayScheduleService.createDaySchedule(createStoreDaySchedule(store2.getStoreId(), "MONDAY", LocalTime.of(9, 0), LocalTime.of(20, 30)), store2.getStoreId());
-        StoreDaySchedule friday2 = storeDayScheduleService.createDaySchedule(createStoreDaySchedule(store2.getStoreId(), "MONDAY", LocalTime.of(9, 0), LocalTime.of(22, 0)), store2.getStoreId());
-        StoreDaySchedule saturday2 = storeDayScheduleService.createDaySchedule(createStoreDaySchedule(store2.getStoreId(), "MONDAY", LocalTime.of(9, 0), LocalTime.of(22, 0)), store2.getStoreId());
-        StoreDaySchedule sunday2 = storeDayScheduleService.createDaySchedule(createStoreDaySchedule(store2.getStoreId(), "MONDAY", LocalTime.of(9, 0), LocalTime.of(17, 0)), store2.getStoreId());
+        StoreDaySchedule monday2 = storeDayScheduleService.createDaySchedule(createStoreDaySchedule(store2.getStoreId(), MONDAY, LocalTime.of(9, 30), LocalTime.of(17, 30)), store2.getStoreId());
+        StoreDaySchedule tuesday2 = storeDayScheduleService.createDaySchedule(createStoreDaySchedule(store2.getStoreId(), TUESDAY, LocalTime.of(9, 30), LocalTime.of(17, 30)), store2.getStoreId());
+        StoreDaySchedule wednesday2 = storeDayScheduleService.createDaySchedule(createStoreDaySchedule(store2.getStoreId(), WEDNESDAY, LocalTime.of(9, 30), LocalTime.of(17, 30)), store2.getStoreId());
+        StoreDaySchedule thursday2 = storeDayScheduleService.createDaySchedule(createStoreDaySchedule(store2.getStoreId(), THURSDAY, LocalTime.of(9, 30), LocalTime.of(17, 30)), store2.getStoreId());
+        StoreDaySchedule friday2 = storeDayScheduleService.createDaySchedule(createStoreDaySchedule(store2.getStoreId(), FRIDAY, LocalTime.of(9, 30), LocalTime.of(17, 30)), store2.getStoreId());
+        StoreDaySchedule saturday2 = storeDayScheduleService.createDaySchedule(createStoreDaySchedule(store2.getStoreId(), SATURDAY, LocalTime.of(9, 30), LocalTime.of(17, 30)), store2.getStoreId());
+        StoreDaySchedule sunday2 = storeDayScheduleService.createDaySchedule(createStoreDaySchedule(store2.getStoreId(), SUNDAY, null, null), store2.getStoreId());
 
         List<Shift> roster = schedulingService.solveRoaster(owner.getOwnerId());
         System.out.println("roster: " + roster);
-        //Map<String, List<Shift>> schedule = schedulingService.generateWeeklySchedule(owner.getOwnerId());
-        //System.out.println("Schedule: " + schedule);
-
     }
 }
