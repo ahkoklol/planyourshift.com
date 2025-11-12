@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -40,7 +41,7 @@ public class ShiftService {
      * @param day the day
      * @return a Shift if found, null otherwise
      */
-    public Optional<Shift> getShiftByEmployeeStoreAndDay(String employeeId, String storeId, LocalDate day) {
+    public Optional<Shift> getShiftByEmployeeStoreAndDay(String employeeId, String storeId, DayOfWeek day) {
         return shiftRepository.findByEmployeeIdAndStoreIdAndDay(employeeId, storeId, day);
     }
 }

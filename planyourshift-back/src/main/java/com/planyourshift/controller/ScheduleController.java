@@ -20,23 +20,12 @@ public class ScheduleController {
     @Autowired
     private SchedulingService schedulingService;
 
-    /**
-     * Generates a weekly shift schedule for an owner's brand/stores.
-     * The generated schedule includes shifts for all employees across all stores.
-     * @param ownerId The owner/brand ID for which to generate the schedule.
-     * @param weekStart The Monday date of the week to schedule (e.g., 2024-10-28).
-     * @return The complete list of proposed shifts (the owner's roster).
-     */
     @PostMapping("/{ownerId}/generate")
     public ResponseEntity<Map<String, List<Shift>>> generateSchedule(@PathVariable String ownerId, @RequestParam("weekStart") LocalDate weekStart) {
         Map<String, List<Shift>> proposedShifts = schedulingService.generateWeeklySchedule(ownerId);
         return ResponseEntity.ok(proposedShifts);
     }
 
-    /**
-     * Endpoint to get a specific employee's schedule for a week.
-     * This uses the finalized shifts stored in the database.
-     */
     @GetMapping("/{ownerId}/employee/{employeeId}")
     public ResponseEntity<List<Shift>> getEmployeeSchedule(
             @PathVariable String ownerId,

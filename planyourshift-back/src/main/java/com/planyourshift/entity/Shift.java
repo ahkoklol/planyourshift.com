@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
+
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -23,7 +25,7 @@ public class Shift {
     @Column(name = "store_id")
     private String storeId;
 
-    private LocalDate day;
+    private DayOfWeek day;
 
     @Column(name = "start_time")
     private LocalTime startTime;

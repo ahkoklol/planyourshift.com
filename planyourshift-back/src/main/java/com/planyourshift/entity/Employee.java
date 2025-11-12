@@ -29,6 +29,9 @@ public class Employee {
     @Column(name = "required_hours")
     private double requiredHours;
 
+    @Column(name = "max_shift_time")
+    private double maxShiftTime;
+
     private String constraints;
     private String preferences;
 }
